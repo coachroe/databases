@@ -1,0 +1,108 @@
+1) How do you find related data held in two separate data tables?
+  A: By joining the two tables based on a value that they share in one of their columns
+  i.e.
+    SELECT *
+    FROM table_a ta
+    JOIN table_b tb ON tb.id = ta.id
+
+
+-----
+
+2) Explain, in your own words, the difference between an INNER JOIN, LEFT OUTER JOIN, and RIGHT OUTER JOIN. Give a real-world example for each.
+
+-----
+
+3) Define primary key and foreign key. Give a real-world example for each.
+  Primary key = unique identifier for each row in a db table (usually an id number).  Example = people's social security number
+  foreign key = primary key of one table that is included in another table.  Example = People's social security number being used in a drivers_liscense id table by a state government
+
+-----
+
+4) Define aliasing.
+  Abbreviating a table name so it is easier to call throughout your sql statement.
+  i.e. table_a ta
+
+-----
+
+5) Change this query so that you are using aliasing:
+  --Original--
+  SELECT professor.name, compensation.salary, compensation.vacation_days
+  FROM professor
+  JOIN compensation ON professor.id = compensation.professor_id;
+
+  --updated--
+  SELECT p.name, c.salary, c.vacation_days
+  FROM professor p
+  JOIN compensation c ON p.id = c.professor_id
+
+-----
+
+6) Why would you use a NATURAL JOIN? Give a real-world example.
+  If two tables had similar naming structure for their columns.  i.e. two tables listing addresses who share common column names like address, city, state, zip code
+
+-----
+
+7) Using this Employee schema and data, write queries to find the following information:
+  List all employees and all shifts.
+    SELECT e.name, s.start_time, s.end_time
+    FROM employees e
+    JOIN scheduled_shifts ss ON ss.employee_id = e.id
+    JOIN shifts s ON s.id = ss.shift_id
+
+-----
+
+8) Using this Adoption schema and data, please write queries to retrieve the following information and include the results:
+
+  Create a list of all volunteers. If the volunteer is fostering a dog, include each dog as well.
+    SELECT v.first_name, v.last_name, d.name as dog_name
+    FROM volunteers v
+    LEFT JOIN dogs d ON d.id = v.foster_dog_id
+
+  The cat's name, adopter's name, and adopted date for each cat adopted within the past month to be displayed as part of the "Happy Tail" social media promotion which posts recent successful adoptions.
+    SELECT c.name as cat_name, a.first_name, a.last_name, ca.date
+    FROM cat_adoptions ca
+    JOIN cats c ON c.id = ca.cat_id
+    JOIN adopters a ON a.id = ca.adopter_id
+
+  Create a list of adopters who have not yet chosen a dog to adopt.
+    SELECT a.*
+    FROM adopters a
+    LEFT JOIN dog_adoptions da ON da.adopter_id = a.id
+    WHERE da.dog_id IS NULL
+
+  Lists of all cats and all dogs who have not been adopted.
+    SELECT d.*
+    FROM dogs d
+    LEFT JOIN dog_adoptions da ON da.dog_id = d.id
+    WHERE da.dog_id IS NULL
+
+
+    SELECT c.*
+    FROM cats c
+    LEFT JOIN cat_adoptions ca ON ca.cat_id = c.id
+    WHERE ca.cat_id IS NULL
+
+  The name of the person who adopted Rosco.
+    SELECT a.first_name, a.last_name
+    FROM dogs d
+    JOIN dog_adoptions da ON da.dog_id = d.id
+    JOIN adopters a ON a.id = da.adopter_id
+    WHERE d.name = 'Rosco'
+
+
+-----
+
+9) Using this Library schema and data, write queries applying the following scenarios and include the results:
+
+  To determine if the library should buy more copies of a given book, please provide the names and position, in order, of all of the patrons with a hold (request for a book with all copies checked out) on "Advanced Potion-Making".
+    SELECT p.name, h.rank
+    FROM books b
+    JOIN holds h ON h.isbn = b.isbn
+    JOIN patrons p ON p.id = h.patron_id
+    ORDER BY h.rank
+
+  List all of the library patrons. If they have one or more books checked out, list the books with the patrons.
+    SELECT p.name, b.title
+    FROM patrons p
+    LEFT JOIN transactions t ON t.patron_id = p.id
+    JOIN books b ON b.isbn = t.isbn
